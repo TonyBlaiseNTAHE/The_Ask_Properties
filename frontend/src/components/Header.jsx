@@ -22,9 +22,7 @@ export default function Header() {
           <FaSearch className="text-slate-600" />
         </form>
         <ul className="flex gap-4">
-          <li className="hidden sm:inline text-slate-700 hover:underline">
-            Home
-          </li>
+          <li className=" sm:inline text-slate-700 hover:underline">Home</li>
           <li className="sm:inline text-slate-700 hover:underline">About</li>
           <li className="sm:inline text-slate-700 hover:underline">Sign In</li>
         </ul>
