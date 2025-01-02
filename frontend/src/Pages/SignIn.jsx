@@ -94,7 +94,7 @@ export default function SignIn() {
           >
             {loading ? "Loading..." : "Sign In"}
           </button>
-          {/* <OAuth /> */}
+          <OAuth />
         </form>
         <div className="mt-6 text-center text-gray-600">
           <p>

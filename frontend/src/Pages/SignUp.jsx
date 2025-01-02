@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import OAuth from "../components/Oauth.jsx";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -98,6 +99,7 @@ export default function SignUp() {
           >
             {loading ? "Loading..." : "Sign Up"}
           </button>
+          <OAuth />
         </form>
         <div className="mt-6 text-center text-gray-600">
           <p>
