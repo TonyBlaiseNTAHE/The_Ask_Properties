@@ -31,6 +31,7 @@ app.listen(3000, () => {
 
 app.use("/backend/user", userRouter);
 app.use("/backend/auth", authRouter);
+app.use("/backend/listing", listingRouter);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
