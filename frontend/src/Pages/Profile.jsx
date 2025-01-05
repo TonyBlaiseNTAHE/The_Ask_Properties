@@ -111,13 +111,16 @@ export default function Profile() {
       dispatch(signOutUserStart());
       const res = await fetch("/backend/auth/signout");
       const data = await res.json();
-      if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
+      if (!data.success) {
+        dispatch(updateUserFailure(data.message)); // Use appropriate action
+        console.error("Sign out failed:", data.message);
         return;
       }
-      dispatch(deleteUserSuccess(data));
+      dispatch(updateUserSuccess(null)); // Clear user data from Redux
+      console.log("Sign out successful");
     } catch (error) {
-      dispatch(deleteUserFailure(data.message));
+      console.error("Error during sign out:", error.message);
+      dispatch(updateUserFailure(error.message)); // Use appropriate action
     }
   };
 

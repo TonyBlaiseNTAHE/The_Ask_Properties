@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRouter from "./routes/user.js";
 import authRouter from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
+import listingRouter from "./routes/listingRoute.js";
 
 dotenv.config();
 mongoose
