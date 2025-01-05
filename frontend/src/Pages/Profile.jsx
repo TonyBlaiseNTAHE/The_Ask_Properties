@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   getDownloadURL,
   getStorage,
@@ -7,13 +7,23 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+} from "../redux/user/userSlice";
 
 export default function Profile() {
-  const { currentUser } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     avatar: currentUser?.avatar,
     username: currentUser?.username,
@@ -52,15 +62,48 @@ export default function Profile() {
     );
   };
 
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/backend/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
   };
 
-  const handleUpdate = (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated profile data:", formData);
-    // Add logic to update the user profile in your backend or database
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/backend/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
   };
 
   return (
@@ -69,7 +112,7 @@ export default function Profile() {
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">
           My Profile
         </h1>
-        <form className="flex flex-col gap-4" onSubmit={handleUpdate}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="relative group self-center">
             <img
               src={formData.avatar || "/images/default-avatar.jpg"}
@@ -105,70 +148,50 @@ export default function Profile() {
               ""
             )}
           </p>
-
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-gray-600 font-medium"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Enter your username"
-              className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-gray-600 font-medium">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Enter your email"
-              className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-gray-600 font-medium"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Enter a new password"
-              className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-
+          <input
+            type="text"
+            id="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Username"
+            className="border p-3 rounded-lg"
+          />
+          <input
+            type="email"
+            id="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            className="border p-3 rounded-lg"
+          />
+          <input
+            type="password"
+            id="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            className="border p-3 rounded-lg"
+          />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium uppercase hover:bg-blue-700 transition"
+            disabled={loading}
+            className="bg-blue-600 text-white py-3 rounded-lg font-medium uppercase hover:bg-blue-700 transition"
           >
-            Update Profile
+            {loading ? "Updating..." : "Update Profile"}
           </button>
         </form>
-
-        <div className="flex justify-between w-full mt-6">
-          <button className="text-red-500 font-medium hover:underline">
-            Delete Account
-          </button>
-          <button className="text-red-500 font-medium hover:underline">
-            Sign Out
-          </button>
+        <p className="text-red-700 mt-5">{error && error}</p>
+        <p className="text-green-700 mt-5">
+          {updateSuccess && "Profile updated successfully!"}
+        </p>
+        <div className="flex justify-between mt-5">
+          <span
+            onClick={handleDeleteUser}
+            className="text-red-700 cursor-pointer"
+          >
+            Delete account
+          </span>
+          <span className="text-red-700 cursor-pointer">Sign Out</span>
         </div>
       </div>
     </div>
