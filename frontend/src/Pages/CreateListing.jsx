@@ -147,7 +147,7 @@ export default function CreateListing() {
       if (data.success === false) {
         setError(data.message);
       }
-      // navigate(`/listing/${data._id}`);
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -159,7 +159,10 @@ export default function CreateListing() {
       <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">
         List Your Property
       </h1>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
         {/* Left Column */}
         <div className="flex flex-col gap-6">
           <div>
@@ -357,14 +360,14 @@ export default function CreateListing() {
               </div>
             ))}
         </div>
-      <div className="mt-8 text-center">
-        <button
-          type="submit"
-          className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:ring focus:ring-blue-300"
-        >
-          Submit Listing
-        </button>
-      </div>
+        <div className="mt-8 text-center">
+          <button
+            type="submit"
+            className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:ring focus:ring-blue-300"
+          >
+            Submit Listing
+          </button>
+        </div>
       </form>
     </main>
   );

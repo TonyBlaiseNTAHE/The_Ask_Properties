@@ -25,6 +25,8 @@ export default function Profile() {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  // const [showListingsError, setShowListingsError] = useState(false);
+  // const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     avatar: currentUser?.avatar,
@@ -124,6 +126,37 @@ export default function Profile() {
       dispatch(updateUserFailure(error.message)); // Use appropriate action
     }
   };
+  // const handleShowListings = async () => {
+  //   try {
+  //     setShowListingsError(false);
+  //     const res = await fetch(`/api/user/listings/${currentUser._id}`);
+  //     const data = await res.json();
+  //     if (data.success === false) {
+  //       setShowListingsError(true);
+  //       return;
+  //     }
+  //     setUserListings(data);
+  //   } catch (error) {
+  //     setShowListingsError(true);
+  //   }
+  // };
+  // const handleListingDelete = async (listingId) => {
+  //   try {
+  //     const res = await fetch(`/api/listing/delete/${listingId}`, {
+  //       method: 'DELETE',
+  //     });
+  //     const data = await res.json();
+  //     if (data.success === false) {
+  //       console.log(data.message);
+  //       return;
+  //     }
+  //     setUserListings((prev) =>
+  //       prev.filter((listing) => listing._id !== listingId)
+  //     );
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-blue-500 to-purple-500 p-4">
