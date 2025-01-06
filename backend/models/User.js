@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: "../frontend/src/assets/images/avatar.avif",
     },
   },
   { timestamps: true }
@@ -27,3 +26,5 @@ const userSchema = new mongoose.Schema(
 const User = mongoose.model("User", userSchema);
 
 export default User;
+
+// default: "../frontend/src/assets/images/avatar.avif",

@@ -7,6 +7,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { Link } from "react-router-dom";
 import {
   updateUserStart,
   updateUserSuccess,
@@ -197,6 +198,12 @@ export default function Profile() {
           >
             {loading ? "Updating..." : "Update Profile"}
           </button>
+          <Link
+            className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+            to={"/create-listing"}
+          >
+            Create Listing
+          </Link>
         </form>
         <p className="text-red-700 mt-5">{error && error}</p>
         <p className="text-green-700 mt-5">
