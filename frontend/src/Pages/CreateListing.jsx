@@ -7,15 +7,32 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateListing() {
+  const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
+    name: "",
+    description: "",
+    address: "",
+    type: "rent",
+    bedrooms: 1,
+    bathrooms: 1,
+    regularPrice: 50,
+    discountPrice: 0,
+    offer: false,
+    parking: false,
+    furnished: false,
   });
   const [imageUploadError, setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false);
-  console.log(formData);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
       setUploading(true);
@@ -42,6 +59,7 @@ export default function CreateListing() {
       setUploading(false);
     }
   };
+
   const storeImage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -66,6 +84,7 @@ export default function CreateListing() {
       );
     });
   };
+
   const handleRemoveImage = (index) => {
     setFormData({
       ...formData,
@@ -73,12 +92,74 @@ export default function CreateListing() {
     });
   };
 
+  const handleChange = (e) => {
+    if (e.target.id === "sale" || e.target.id === "rent") {
+      setFormData({
+        ...formData,
+        type: e.target.id,
+      });
+    }
+
+    if (
+      e.target.id === "parking" ||
+      e.target.id === "furnished" ||
+      e.target.id === "offer"
+    ) {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.checked,
+      });
+    }
+
+    if (
+      e.target.type === "number" ||
+      e.target.type === "text" ||
+      e.target.type === "textarea"
+    ) {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.value,
+      });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (formData.imageUrls.length < 1)
+        return setError("You must upload at least one image");
+      if (+formData.regularPrice < +formData.discountPrice)
+        return setError("Discount price must be lower than regular price");
+      setLoading(true);
+      setError(false);
+      const res = await fetch("/backend/listing/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          userRef: currentUser._id,
+        }),
+      });
+      const data = await res.json();
+      setLoading(false);
+      if (data.success === false) {
+        setError(data.message);
+      }
+      // navigate(`/listing/${data._id}`);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="p-6 max-w-5xl mx-auto bg-gray-100 rounded-lg shadow-lg mt-20">
       <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">
         List Your Property
       </h1>
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left Column */}
         <div className="flex flex-col gap-6">
           <div>
@@ -96,6 +177,8 @@ export default function CreateListing() {
               maxLength="62"
               minLength="10"
               required
+              onChange={handleChange}
+              value={formData.name}
             />
           </div>
           <div>
@@ -110,6 +193,8 @@ export default function CreateListing() {
               placeholder="Describe your property"
               className="mt-1 block w-full p-4 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
               required
+              onChange={handleChange}
+              value={formData.description}
             ></textarea>
           </div>
           <div>
@@ -125,6 +210,8 @@ export default function CreateListing() {
               placeholder="Enter address"
               className="mt-1 block w-full p-4 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
               required
+              onChange={handleChange}
+              value={formData.address}
             />
           </div>
           <fieldset className="border-t pt-4">
@@ -144,6 +231,8 @@ export default function CreateListing() {
                     type="checkbox"
                     id={feature.id}
                     className="h-5 w-5 text-blue-600 rounded focus:ring focus:ring-blue-300"
+                    onChange={handleChange}
+                    checked={formData[feature.id]}
                   />
                   <label htmlFor={feature.id} className="text-sm text-gray-700">
                     {feature.label}
@@ -178,6 +267,8 @@ export default function CreateListing() {
                     min={input.min}
                     max={input.max}
                     required
+                    onChange={handleChange}
+                    value={formData[input.id]}
                     className="mt-1 block w-full p-4 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
                   />
                 </div>
@@ -203,9 +294,10 @@ export default function CreateListing() {
                   <input
                     type="number"
                     id={price.id}
-                    min="1"
-                    max="1000000"
+                    min="0"
                     required
+                    onChange={handleChange}
+                    value={formData[price.id]}
                     className="mt-1 block w-full p-4 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
                   />
                 </div>
@@ -265,7 +357,6 @@ export default function CreateListing() {
               </div>
             ))}
         </div>
-      </form>
       <div className="mt-8 text-center">
         <button
           type="submit"
@@ -274,6 +365,7 @@ export default function CreateListing() {
           Submit Listing
         </button>
       </div>
+      </form>
     </main>
   );
 }
