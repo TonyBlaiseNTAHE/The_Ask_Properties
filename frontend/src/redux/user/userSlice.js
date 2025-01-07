@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 const initialState = {
   currentUser: null,
   error: null,
   loading: false,
 };
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -40,6 +42,10 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    deleteUserFailure: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
     signOutUserStart: (state) => {
       state.loading = true;
     },
@@ -54,6 +60,7 @@ const userSlice = createSlice({
     },
   },
 });
+
 export const {
   signInStart,
   signInSuccess,
@@ -62,10 +69,11 @@ export const {
   updateUserSuccess,
   updateUserStart,
   deleteUserFailure,
-  deleteUserStart,
   deleteUserSuccess,
+  deleteUserStart,
   signOutUserFailure,
   signOutUserSuccess,
   signOutUserStart,
 } = userSlice.actions;
+
 export default userSlice.reducer;
