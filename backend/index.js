@@ -5,6 +5,7 @@ import userRouter from "./routes/user.js";
 import authRouter from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
 import listingRouter from "./routes/listingRoute.js";
+import path from "path";
 
 dotenv.config();
 mongoose
@@ -16,6 +17,8 @@ mongoose
     console.log("not connected");
   });
 
+const __dirname = path.resolve();
+
 const app = express();
 
 app.use(express.json());
@@ -26,9 +29,11 @@ app.listen(3000, () => {
   console.log("Server is running on port 3000!");
 });
 
-// app.get("/test", (req, res) => {
-//   res.json({ message: "Hello!" });
-// });
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
 
 app.use("/backend/user", userRouter);
 app.use("/backend/auth", authRouter);

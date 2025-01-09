@@ -14,7 +14,7 @@ export default function Search() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [listings, setListings] = useState([]);
+  const [results, setResults] = useState([]);
   const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function Search() {
       });
     }
 
-    const fetchListings = async () => {
+    const fetchResults = async () => {
       setLoading(true);
       setShowMore(false);
       const searchQuery = urlParams.toString();
@@ -58,11 +58,11 @@ export default function Search() {
       } else {
         setShowMore(false);
       }
-      setListings(data);
+      setResults(data);
       setLoading(false);
     };
 
-    fetchListings();
+    fetchResults();
   }, [location.search]);
 
   const handleChange = (e) => {
@@ -114,8 +114,8 @@ export default function Search() {
   };
 
   const onShowMoreClick = async () => {
-    const numberOfListings = listings.length;
-    const startIndex = numberOfListings;
+    const numberOfResults = results.length;
+    const startIndex = numberOfResults;
     const urlParams = new URLSearchParams(location.search);
     urlParams.set("startIndex", startIndex);
     const searchQuery = urlParams.toString();
@@ -124,7 +124,7 @@ export default function Search() {
     if (data.length < 9) {
       setShowMore(false);
     }
-    setListings([...listings, ...data]);
+    setResults([...results, ...data]);
   };
 
   return (
@@ -257,11 +257,11 @@ export default function Search() {
       {/* Results Section */}
       <div className="flex-1 bg-white p-8 shadow-lg">
         <h1 className="text-3xl font-semibold text-indigo-700 border-b pb-3 mb-6">
-          Listing Results
+          Search Results
         </h1>
         <div className="p-7 flex flex-wrap gap-4">
-          {!loading && listings.length === 0 && (
-            <p className="text-xl text-slate-700">No listing found!</p>
+          {!loading && results.length === 0 && (
+            <p className="text-xl text-slate-700">No results found!</p>
           )}
           {loading && (
             <p className="text-xl text-slate-700 text-center w-full">
@@ -270,9 +270,9 @@ export default function Search() {
           )}
 
           {!loading &&
-            listings &&
-            listings.map((listing) => (
-              <ListingItem key={listing._id} listing={listing} />
+            results &&
+            results.map((result) => (
+              <ListingItem key={result._id} listing={result} />
             ))}
 
           {showMore && (
