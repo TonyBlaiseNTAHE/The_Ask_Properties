@@ -5,6 +5,7 @@ import userRouter from "./routes/user.js";
 import authRouter from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
 import listingRouter from "./routes/listingRoute.js";
+import path from "path";
 
 dotenv.config();
 mongoose
@@ -15,6 +16,8 @@ mongoose
   .catch((err) => {
     console.log("not connected");
   });
+
+const __dirname = path.resolve();
 
 const app = express();
 
@@ -30,6 +33,10 @@ app.listen(3000, () => {
 //   res.json({ message: "Hello!" });
 // });
 
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
 app.use("/backend/user", userRouter);
 app.use("/backend/auth", authRouter);
 app.use("/backend/listing", listingRouter);
