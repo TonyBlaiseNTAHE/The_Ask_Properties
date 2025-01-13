@@ -1,8 +1,12 @@
 # TheAsk Properties
 
-![C Logo](https://github.com/TonyBlaiseNTAHE/alx-low_level_programming/blob/master/icons8-c-programming-480.png)
-
 Welcome to **TheAsk Properties**, your one-stop solution for seamless real estate management. This web application allows users to explore, manage, and list properties, ensuring a smooth experience for property seekers and owners alike.
+
+![The Ask Platfoarm](https://github.com/TonyBlaiseNTAHE/The_Ask_Properties/blob/main/Screenshot%202025-01-13%208.55.12%20AM.png)
+![The Ask Platfoarm](https://github.com/TonyBlaiseNTAHE/The_Ask_Properties/blob/main/Screenshot%202025-01-13%208.55.20%20AM.png)
+![The Ask Platfoarm](https://github.com/TonyBlaiseNTAHE/The_Ask_Properties/blob/main/Screenshot%202025-01-13%208.56.34%20AM.png)
+![The Ask Platfoarm](https://github.com/TonyBlaiseNTAHE/The_Ask_Properties/blob/main/Screenshot%202025-01-13%208.56.47%20AM.png)
+![The Ask Platfoarm](https://github.com/TonyBlaiseNTAHE/The_Ask_Properties/blob/main/Screenshot%202025-01-13%208.57.23%20AM.png)
 
 ## Features
 
